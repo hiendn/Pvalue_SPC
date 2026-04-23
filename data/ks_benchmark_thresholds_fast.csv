@@ -1,0 +1,29 @@
+n0,target_arl,chart,chart_label,chart_type,threshold,direction,lambda,r,kappa,ks_engine,selected_mean_R1,selected_se_R1,selected_censored_rate
+ 50,200,p-value Shewhart,p-value Shewhart,p_shewhart,0.03980341,lower,,,,asymp,197.805,26.21988,0.000
+ 50,200,Qtilde r=-0.8,Qtilde r=-0.8,qtilde,0.49877895,lower,0.50,-0.8,,asymp,290.490,38.38197,0.000
+ 50,200,Qtilde r=-0.9,Qtilde r=-0.9,qtilde,0.49931892,lower,0.50,-0.9,,asymp,783.900,99.34062,0.025
+ 50,200,Qbar lambda=0.95,Qbar lambda=0.95,qbar,0.07514659,lower,0.95, 1.0,,asymp,202.695,30.75962,0.000
+ 50,200,KS Shewhart statistic,KS Shewhart statistic,ks_shewhart,0.28416382,upper,,,,asymp,200.040,27.63087,0.000
+ 50,200,KS-EWMA statistic,KS-EWMA statistic,ks_ewma,0.18303824,upper,0.20,,,asymp,200.060,45.13698,0.005
+ 50,200,KS-CUSUM statistic,KS-CUSUM statistic,ks_cusum,0.15828665,upper,,,0.1715753,asymp,189.110,36.57762,0.000
+ 50,500,p-value Shewhart,p-value Shewhart,p_shewhart,0.02564346,lower,,,,asymp,496.540,65.40499,0.005
+ 50,500,Qtilde r=-0.8,Qtilde r=-0.8,qtilde,0.40025649,lower,0.50,-0.8,,asymp,498.805,65.76178,0.005
+ 50,500,Qtilde r=-0.9,Qtilde r=-0.9,qtilde,0.49931892,lower,0.50,-0.9,,asymp,783.900,99.34062,0.025
+ 50,500,Qbar lambda=0.95,Qbar lambda=0.95,qbar,0.05269438,lower,0.95, 1.0,,asymp,497.175,68.87189,0.010
+ 50,500,KS Shewhart statistic,KS Shewhart statistic,ks_shewhart,0.29952930,upper,,,,asymp,484.985,58.18468,0.000
+ 50,500,KS-EWMA statistic,KS-EWMA statistic,ks_ewma,0.18880029,upper,0.20,,,asymp,500.490,98.79374,0.035
+ 50,500,KS-CUSUM statistic,KS-CUSUM statistic,ks_cusum,0.19444275,upper,,,0.1715753,asymp,508.900,89.32245,0.020
+100,200,p-value Shewhart,p-value Shewhart,p_shewhart,0.03223538,lower,,,,asymp,199.590,24.25087,0.000
+100,200,Qtilde r=-0.8,Qtilde r=-0.8,qtilde,0.49392451,lower,0.50,-0.8,,asymp,199.910,24.97430,0.000
+100,200,Qtilde r=-0.9,Qtilde r=-0.9,qtilde,0.49863878,lower,0.50,-0.9,,asymp,483.640,58.05182,0.000
+100,200,Qbar lambda=0.95,Qbar lambda=0.95,qbar,0.06355211,lower,0.95, 1.0,,asymp,198.145,26.55682,0.000
+100,200,KS Shewhart statistic,KS Shewhart statistic,ks_shewhart,0.20456210,upper,,,,asymp,199.915,24.33683,0.000
+100,200,KS-EWMA statistic,KS-EWMA statistic,ks_ewma,0.13130170,upper,0.20,,,asymp,200.415,42.52120,0.005
+100,200,KS-CUSUM statistic,KS-CUSUM statistic,ks_cusum,0.10962085,upper,,,0.1234103,asymp,199.355,34.08898,0.000
+100,500,p-value Shewhart,p-value Shewhart,p_shewhart,0.01818604,lower,,,,asymp,500.095,59.42021,0.000
+100,500,Qtilde r=-0.8,Qtilde r=-0.8,qtilde,0.28353877,lower,0.50,-0.8,,asymp,500.540,59.73609,0.000
+100,500,Qtilde r=-0.9,Qtilde r=-0.9,qtilde,0.46073512,lower,0.50,-0.9,,asymp,499.320,59.74548,0.000
+100,500,Qbar lambda=0.95,Qbar lambda=0.95,qbar,0.04775701,lower,0.95, 1.0,,asymp,500.210,65.05385,0.010
+100,500,KS Shewhart statistic,KS Shewhart statistic,ks_shewhart,0.21904346,upper,,,,asymp,501.080,54.46292,0.000
+100,500,KS-EWMA statistic,KS-EWMA statistic,ks_ewma,0.13593573,upper,0.20,,,asymp,491.470,82.25676,0.020
+100,500,KS-CUSUM statistic,KS-CUSUM statistic,ks_cusum,0.13952209,upper,,,0.1234103,asymp,504.430,78.27580,0.015
