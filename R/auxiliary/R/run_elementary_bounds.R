@@ -1,13 +1,15 @@
-# IC calibration and EWMA sensitivity simulations.
+# Elementary IC theorem-bound simulations.
 #
-# Run from the repository root with:
-#   source("R/sim_ic.R")
+# Run from R/auxiliary:
+#   Rscript R/run_elementary_bounds.R
 #
-# The script writes the elementary IC examples, the AR(1) example, the raw KS
-# chart study, and the KS EWMA sensitivity study to output/.
+# Output files:
+#   output/elementary_normal_ic_fast.csv
+#   output/ar1_ic_fast.csv
 
-source("R/utils.R")
+source("R/00_fast_utilities.R")
 ensure_dir("output")
+ensure_dir("output/checkpoints")
 
 # -----------------------------------------------------------------------------
 # User-adjustable parameters
@@ -33,7 +35,7 @@ N_REP_EWMA_GRID <- 500L
 MAX_T_AR1 <- 200000L
 MAX_T_KS <- 200000L
 
-# KS grids.
+# KS grids.  Increase these for the final manuscript run if needed.
 KS_RAW_N0 <- c(20L, 50L, 100L)
 EWMA_N0 <- c(50L, 100L)
 ALPHA_RAW <- c(0.01, 0.05)
@@ -41,7 +43,7 @@ ALPHA_EWMA <- c(0.05, 0.10)
 K_VALUES <- c(1L, 5L)
 
 # Sensitivity grid.  The multi-chart simulator computes all charts on the same
-# KS p-value stream.
+# KS p-value stream, so adding charts is much cheaper than in the original code.
 QTILDE_LAMBDAS <- c(0.5, 0.7, 0.9)
 QTILDE_RS <- c(-0.9, -0.8, -0.5, 0.5)
 QBAR_LAMBDAS <- c(0.8, 0.9, 0.95)
@@ -113,6 +115,10 @@ normal_out <- do.call(rbind, lapply(seq_along(ALPHA_RAW), function(i) {
                          reps = N_REP_ELEMENTARY, seed = 11000L + 1000L * i,
                          verbose = VERBOSE, batch_size = max(1L, floor(N_REP_ELEMENTARY / 10L)))
 }))
+# The manuscript uses the reusable-baseline refinement for this experiment,
+# not the generic marginal bound retained in the legacy columns.
+normal_out$reuse_lower_bound <- normal_out$k / normal_out$alpha
+normal_out$reuse_ratio <- normal_out$mean_Rk / normal_out$reuse_lower_bound
 utils::write.csv(normal_out, "output/elementary_normal_ic_fast.csv", row.names = FALSE)
 log_msg("Saved output/elementary_normal_ic_fast.csv", verbose = VERBOSE)
 
@@ -243,6 +249,16 @@ ar1_out <- run_ar1_grid_fast(reps = N_REP_AR1, max_t = MAX_T_AR1, seed = 12000L,
 utils::write.csv(ar1_out, "output/ar1_ic_fast.csv", row.names = FALSE)
 log_msg("Saved output/ar1_ic_fast.csv", verbose = VERBOSE)
 
+# The remainder of this historical generator concerns an obsolete asymptotic
+# KS sensitivity study that is not used by the revised manuscript.  It is kept
+# below for provenance, but is opt-in so that the documented command reproduces
+# only the elementary and AR(1) evidence used in the paper.
+if (!identical(tolower(Sys.getenv("RUN_OBSOLETE_KS_STAGES", "false")), "true")) {
+  log_msg("Elementary and AR(1) stages complete; obsolete KS stages skipped.",
+          verbose = VERBOSE)
+  quit(save = "no", status = 0L)
+}
+
 # -----------------------------------------------------------------------------
 # Raw KS p-value chart under VSS
 # -----------------------------------------------------------------------------
@@ -254,14 +270,14 @@ for (n0 in KS_RAW_N0) {
   for (alpha in ALPHA_RAW) {
     charts <- list(make_p_chart(alpha, validity = "marginal",
                                 label = sprintf("KS raw P_t alpha=%.3g", alpha)))
-    cp <- sprintf("output/ks_raw_n0%d_alpha%s_raw_long.csv", n0, gsub("\\.", "p", as.character(alpha)))
+    cp <- sprintf("output/checkpoints/ks_raw_n0%d_alpha%s_raw_long.csv", n0, gsub("\\.", "p", as.character(alpha)))
     sm <- estimate_arl_ks_multi(
       charts = charts, n_rep = N_REP_KS_RAW, seed = 13000L + idx * 1000L,
       n0 = n0, max_t = MAX_T_KS, k_values = K_VALUES, n_cores = N_CORES,
       phase2_name = "IC", ks_engine = KS_ENGINE,
       exact_max_product = EXACT_MAX_PRODUCT, jmax = JMAX,
       finite_sample_correction = FINITE_SAMPLE_CORRECTION,
-      batch_size = BATCH_SIZE, verbose = VERBOSE, checkpoint_file = NULL
+      batch_size = BATCH_SIZE, verbose = VERBOSE, checkpoint_file = cp
     )
     sm$n0 <- n0
     sm$ks_engine <- KS_ENGINE
@@ -302,7 +318,7 @@ idx <- 1L
 for (n0 in EWMA_N0) {
   for (alpha in ALPHA_EWMA) {
     charts <- make_sensitivity_charts(alpha)
-    cp <- sprintf("output/ks_ewma_sensitivity_n0%d_alpha%s_raw_long.csv",
+    cp <- sprintf("output/checkpoints/ks_ewma_sensitivity_n0%d_alpha%s_raw_long.csv",
                   n0, gsub("\\.", "p", as.character(alpha)))
     raw_df <- run_replicates_ks_multi(
       n_rep = N_REP_EWMA_GRID, seed = 14000L + idx * 1000L,
@@ -312,7 +328,7 @@ for (n0 in EWMA_N0) {
       ks_engine = KS_ENGINE, exact_max_product = EXACT_MAX_PRODUCT, jmax = JMAX,
       finite_sample_correction = FINITE_SAMPLE_CORRECTION,
       n_cores = N_CORES, batch_size = BATCH_SIZE,
-      verbose = VERBOSE, checkpoint_file = NULL
+      verbose = VERBOSE, checkpoint_file = cp
     )
     raw_df$n0 <- n0
     raw_df$alpha <- alpha

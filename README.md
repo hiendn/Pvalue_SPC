@@ -1,68 +1,54 @@
-# P-value SPC manuscript code
+# P-value SPC manuscript code and supplementary tables
 
-R code and simulation outputs for the numerical studies in **Statistical process control via p-values**.
+This repository contains the R code, numerical settings, figures, and
+supplementary tables for **Statistical process control via p-values**.
+The reported comparison uses five charts and Phase II sample sizes
+`n = 3, 5, 8, 20`.
 
-The repository contains the processed CSV files used in the manuscript, the scripts used to regenerate the figures, and the main simulation scripts.  The code uses base R only.
+## Supplementary tables
 
-## Layout
+- `Table_S1a_IC_calibration_and_validation.csv`: five-chart IC calibration
+  and independent validation.
+- `Table_S1b_full_OOC_performance.csv`: all 120 five-chart OOC
+  configurations, including ECD, PTS, uncertainty, and survivor counts.
+- `Table_S2_VSI_performance.csv`: VSI calibration and independent
+  elapsed-time evaluation.
+- `Table_S3_implementation_example.csv`: the nine-inspection numerical trace.
+- `Table_S4_elementary_bound_results.csv`: reusable-baseline and stationary
+  AR(1) theorem-bound studies.
+- `Table_S5_localisation_results.csv`: localisation performance and
+  stopped-run diagnostics.
 
-```text
-R/
-  utils.R                 shared simulation utilities
-  sim_ic.R                IC ARL and EWMA sensitivity studies
-  sim_ks_benchmark.R      matched-IC-ARL KS benchmark study
-  sim_localisation.R      normal and Cauchy localisation studies
-  plot_uniform_ewma.R     uniform-EWMA PDF/CDF figures
-  plot_sensitivity.R      EWMA conservativeness heatmap
-  plot_benchmark.R        matched-ARL delay-ratio boxplot
-  make_figures.R          regenerates all figures
-  tables.R                compact CSV summaries for benchmark tables
+The tables are in [`supplementary_tables/`](supplementary_tables/). The
+committed source summaries used to construct them are in [`data/`](data/).
 
-scripts/                  short wrappers for common runs
-data/                     processed simulation outputs used in the paper
-figures/                  manuscript figures in PDF and PNG formats
-output/                   default destination for rerun simulations
-tables/                   generated table summaries
+## Code
+
+The core simulations use base R. From the repository root:
+
+```sh
+Rscript R/run_core_simulations.R full
+Rscript R/postprocess_vsi_example.R full
+Rscript R/make_supplementary_tables.R
 ```
 
-## Figures
+Use `pilot` instead of `full` in the first two commands for a short
+structural check. The elementary-bound and localisation generators are in
+`R/auxiliary/`; their run instructions are given in the file headers.
+Simulation reruns are written under `R/output/{mode}`; the cited
+supplementary tables are rebuilt from the committed numerical snapshots in
+`data/`.
 
-From the repository root:
+Corresponding uniform-$p$-value figures can be generated with:
 
-```r
-source("scripts/make_figures.R")
+```sh
+Rscript scripts/make_figures.R
 ```
 
-This recreates the four figures in `figures/`:
-
-```text
-Unif_EWMA_Figs.pdf
-Super_Unif_CDF.pdf
-ewma_qtilde_sensitivity_heatmap.pdf
-ks_benchmark_relative_delay_boxplot.pdf
-```
-
-PNG copies are written at the same time.
-
-## Table summaries
-
-```r
-source("scripts/make_tables.R")
-```
-
-The summaries are written to `tables/`.
-
-## Simulations
-
-The processed outputs in `data/` are the results used in the manuscript. To rerun the simulations, use:
-
-```r
-source("scripts/run_ic_study.R")
-source("scripts/run_ks_benchmark_smoke_test.R")  # quick check
-source("scripts/run_ks_benchmark.R")             # full benchmark
-source("scripts/run_localisation.R")
-```
-
-New simulation results are written to `output/`. The plotting and table scripts look in `output/` first when a freshly generated file is present; otherwise they use the packaged files in `data/`.
-
-The KS benchmark is the longest run. The smoke test uses a small grid and is useful for checking that R and the local file paths are set up correctly.
+The reported calculations were run with R 4.4.0. One of the 15,000 `n=8`
+raw exact-KS IC validation runs was unsignalled at inspection 5000 and was
+recorded as 5001; the IC table therefore reports recorded, capped run
+lengths. None of the 120 retained OOC configurations was censored. The
+localisation simulations use a Bonferroni global alarm followed by Holm
+localisation; three weak Cauchy configurations contain capped run lengths,
+as identified by their censoring-rate column.

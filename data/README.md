@@ -1,3 +1,9 @@
-Processed CSV files used for the numerical summaries and figures in the manuscript.
+# Numerical source summaries
 
-Fresh simulation runs write to `output/`.  The plotting and table-summary scripts use `output/` first when a matching file is available and otherwise fall back to these files.
+These CSV files are the numerical summaries used by
+`R/make_supplementary_tables.R`. They contain the five-chart IC and OOC
+study, VSI study, exact-KS checks, implementation example, elementary-bound
+study, and localisation study.
+
+The committed supplementary tables are the reader-facing outputs cited in
+the manuscript.

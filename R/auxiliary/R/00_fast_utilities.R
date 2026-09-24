@@ -1,8 +1,19 @@
-# Shared functions for the p-value SPC simulation studies.
+# Fast utility functions for the SPC via p-values revision simulations.
 #
-# The KS routines compute the two-sample statistic directly from sorted samples.
-# This keeps the two-phase KS simulations practical while retaining the option
-# to use exact or hybrid p-value calculations for smaller sample sizes.
+# Main speedups relative to the first revision-code package:
+#   1. Two-sample KS p-values are computed from a sorted Phase-I sample and a
+#      fast KS statistic, avoiding stats::ks.test() inside the innermost loop
+#      whenever possible.
+#   2. Multiple charts are evaluated on the same simulated p-value stream, so a
+#      single KS calculation can update raw p-value, Qtilde, Qbar, KS-EWMA, and
+#      KS-CUSUM charts simultaneously.
+#   3. Monte Carlo runs are processed in batches, with timestamped progress
+#      messages and optional checkpoint CSV files after each batch.
+#
+# The code uses base R only.  For exact two-sample KS p-values, recent versions
+# of R expose stats::psmirnov() internally/externally.  If it is not available,
+# the exact engine falls back to stats::ks.test(); the asymptotic engine remains
+# fast on all R versions.
 
 `%||%` <- function(x, y) if (is.null(x)) y else x
 
@@ -568,9 +579,8 @@ run_replicates_ks_multi <- function(n_rep, seed, charts, n0, n_sampler,
     .print_partial_summary(partial, sprintf("after %d reps", length(all_ans)), verbose = verbose)
 
     if (!is.null(checkpoint_file)) {
-      checkpoint_rds <- sub("\\.csv$", "_summary.rds", checkpoint_file)
-      saveRDS(summarise_run_df(partial), checkpoint_rds, compress = "xz")
-      log_msg("Checkpoint summary written to %s", checkpoint_rds, verbose = verbose)
+      utils::write.csv(partial, checkpoint_file, row.names = FALSE)
+      log_msg("Checkpoint written to %s", checkpoint_file, verbose = verbose)
     }
   }
 

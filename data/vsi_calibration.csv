@@ -1,0 +1,2 @@
+"action_threshold","action_boundary_gamma","warning_nominal","warning_threshold","d_short","d_long_initial","d_long","first_interval","n_calibration","target_FSI_ATS","calibrated_VSI_ATS","se_ATS","ci_lower","ci_upper","inspection_ARL","censoring_rate","matched_by_linear_interval_solution"
+0.0068148052779183,0.430110749322921,0.5,0.51241418786697,0.1,1.9,1.91226642472436,1,4000,201.30125,201.30125,4.0315423422968,193.399427009099,209.203072990902,201.30125,0.00025,TRUE

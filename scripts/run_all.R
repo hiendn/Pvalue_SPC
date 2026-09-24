@@ -1,7 +1,0 @@
-source("R/sim_ic.R")
-source("R/sim_ks_benchmark.R")
-source("R/sim_localisation.R")
-source("R/make_figures.R")
-make_all_figures()
-source("R/tables.R")
-make_all_table_summaries()
