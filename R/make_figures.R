@@ -2,7 +2,7 @@
 
 source("R/plot_uniform_ewma.R")
 
-make_all_figures <- function(figure_dir = "figures") {
+make_all_figures <- function(figure_dir = "generated_figures") {
   make_uniform_ewma_figures(figure_dir)
   invisible(TRUE)
 }

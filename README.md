@@ -45,6 +45,9 @@ Corresponding uniform-$p$-value figures can be generated with:
 Rscript scripts/make_figures.R
 ```
 
+They are written to `generated_figures/`, leaving the supplied manuscript
+graphics unchanged.
+
 The reported calculations were run with R 4.4.0. One of the 15,000 `n=8`
 raw exact-KS IC validation runs was unsignalled at inspection 5000 and was
 recorded as 5001; the IC table therefore reports recorded, capped run

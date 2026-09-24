@@ -103,7 +103,7 @@ plot_cdf_grid <- function(outfile, device = c("pdf", "png"),
   }
 }
 
-make_uniform_ewma_figures <- function(figure_dir = "figures") {
+make_uniform_ewma_figures <- function(figure_dir = "generated_figures") {
   root <- getwd()
   ensure_dir(file.path(root, figure_dir))
   plot_pdf_grid(file.path(root, figure_dir, "Unif_EWMA_Figs.pdf"), "pdf")
