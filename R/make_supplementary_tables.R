@@ -81,6 +81,55 @@ s1b <- ooc[, s1b_cols]
 stopifnot(nrow(s1b) == 120L, all(s1b$delay_censored_rate == 0))
 write_table(s1b, "Table_S1b_full_OOC_performance.csv")
 
+# Main Table 4: observation counts and fixed-budget probabilities for nu = 1.
+effort <- s1b[s1b$change_time == 1L, ]
+batch_sizes <- c(3L, 5L, 8L, 20L)
+scenarios <- c("normal_location", "normal_scale", "cauchy")
+law_labels <- c("$\\mathrm N(0.5,1)$", "$\\mathrm N(0,2)$",
+                "$\\mathrm{Cauchy}(0,1)$")
+chart_labels <- c("Raw $P_t$", "$\\widetilde Q_{0.95,t}^{(1)}$",
+                  "$P$-EWMA", "KS-EWMA", "Shewhart--KS")
+effort_key <- paste(effort$scenario, effort$chart, effort$n, sep = "|")
+expected_keys <- expand.grid(scenario = scenarios, chart = charts,
+                             n = batch_sizes)
+expected_keys <- with(expected_keys, paste(scenario, chart, n, sep = "|"))
+stopifnot(nrow(effort) == 60L, !anyDuplicated(effort_key),
+          setequal(effort_key, expected_keys),
+          all(is.finite(effort$mean_postchange_observations)),
+          all(is.finite(effort$PTS_obs_100)),
+          all(effort$PTS_obs_100 >= 0 & effort$PTS_obs_100 <= 1))
+format_value <- function(value, digits, best) {
+  value <- sprintf(paste0("%.", digits, "f"), value)
+  if (best) paste0("\\textbf{", value, "}") else value
+}
+effort_lines <- c("\\begin{tabular}{@{}llcccc@{}}", "\\toprule",
+                  "OOC law & Chart & $n=3$ & $n=5$ & $n=8$ & $n=20$ \\\\",
+                  "\\midrule")
+for (scenario_idx in seq_along(scenarios)) {
+  scenario <- scenarios[[scenario_idx]]
+  for (chart_idx in seq_along(charts)) {
+    entries <- vapply(batch_sizes, function(n) {
+      group <- effort[effort$scenario == scenario & effort$n == n, ]
+      row <- group[group$chart == charts[[chart_idx]], ]
+      stopifnot(nrow(group) == length(charts), nrow(row) == 1L)
+      paste0(format_value(row$mean_postchange_observations, 1L,
+                         row$mean_postchange_observations ==
+                           min(group$mean_postchange_observations)), "/",
+             format_value(row$PTS_obs_100, 3L,
+                          row$PTS_obs_100 == max(group$PTS_obs_100)))
+    }, character(1L))
+    effort_lines <- c(effort_lines,
+                      paste0(if (chart_idx == 1L) law_labels[[scenario_idx]]
+                             else "", " & ", chart_labels[[chart_idx]],
+                             " & ", paste(entries, collapse = " & "),
+                             " \\\\"))
+  }
+  if (scenario_idx < length(scenarios))
+    effort_lines <- c(effort_lines, "\\addlinespace[2pt]")
+}
+effort_lines <- c(effort_lines, "\\bottomrule", "\\end{tabular}")
+writeLines(effort_lines, file.path(out_dir, "Table4_observation_effort.tex"))
+
 # S2: VSI calibration and independent performance evaluation.
 vcal <- read_data("vsi_calibration.csv")
 vsi <- read_data("vsi_metrics.csv")
